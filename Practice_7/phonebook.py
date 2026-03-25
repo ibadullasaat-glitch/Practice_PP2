@@ -1,6 +1,5 @@
 import psycopg2
 import csv
-import sys
 from config import host, port, user, password, database
 
 def get_connection():
