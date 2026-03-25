@@ -32,6 +32,7 @@ try:
 
 
 
+
 except Exception as _ex:
     print("[INFO] Error while working with PostgreSQL", _ex)
 finally:
