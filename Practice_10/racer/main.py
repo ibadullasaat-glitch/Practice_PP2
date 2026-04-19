@@ -20,7 +20,6 @@ coin_list_in_game = []
 
 score = 0
 
-# Загрузка изображений
 fon = pygame.image.load('Practice_10/racer/images/fon.png')
 player = pygame.image.load('Practice_10/racer/images/player.png')
 enemy_1 = pygame.image.load('Practice_10/racer/images/enemy_1.png')
@@ -28,13 +27,11 @@ enemy_2 = pygame.image.load('Practice_10/racer/images/enemy_2.png')
 enemy_3 = pygame.image.load('Practice_10/racer/images/enemy_3.png')
 coin = pygame.image.load('Practice_10/racer/images/coin.png')
 
-# Шрифты
 label = pygame.font.Font('Practice_10/racer/fonts/Font.ttf', 40)
 lose_label = label.render('You Lose!', False, (255, 255, 255))
 restart_label = label.render('Restart', False, (255, 0, 0))
 restart_label_rect = restart_label.get_rect(topleft=(240, 500))
 
-# Таймеры
 enemy_timer_1 = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer_1, 500)
 

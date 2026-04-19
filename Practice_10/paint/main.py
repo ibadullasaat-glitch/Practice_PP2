@@ -92,9 +92,9 @@ def main():
                 drawLineBetween(screen, points[i], points[i + 1], radius, current_color)
 
         instructions = [
-            "P - Кисть    R - Прямоугольник    C - Круг    E - Ластик",
+            "P - Pen    R - Rectangle    C - Circle    E - Eraser",
             "1-Black  2-Red  3-Green  4-Blue  5-Yellow  6-Purple  7-Orange",
-            "DELETE / BACKSPACE - Очистить экран"
+            "DELETE / BACKSPACE - Clean Sreen"
         ]
 
         for i, text in enumerate(instructions):
