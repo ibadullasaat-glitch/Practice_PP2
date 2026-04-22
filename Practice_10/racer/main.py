@@ -8,11 +8,12 @@ pygame.display.set_caption("Racer")
 icon = pygame.image.load('Practice_10/racer/images/icon.png')
 pygame.display.set_icon(icon)
 
-
+# Player movement settings
 player_speed = 3
 player_x = 30
 player_y = 520
 
+# Lists to store active objects on screen
 enemy_1_list_in_game = []
 enemy_2_list_in_game = []
 enemy_3_list_in_game = []
@@ -20,6 +21,7 @@ coin_list_in_game = []
 
 score = 0
 
+# Load assets
 fon = pygame.image.load('Practice_10/racer/images/fon.png')
 player = pygame.image.load('Practice_10/racer/images/player.png')
 enemy_1 = pygame.image.load('Practice_10/racer/images/enemy_1.png')
@@ -27,11 +29,13 @@ enemy_2 = pygame.image.load('Practice_10/racer/images/enemy_2.png')
 enemy_3 = pygame.image.load('Practice_10/racer/images/enemy_3.png')
 coin = pygame.image.load('Practice_10/racer/images/coin.png')
 
+# Fonts
 label = pygame.font.Font('Practice_10/racer/fonts/Font.ttf', 40)
 lose_label = label.render('You Lose!', False, (255, 255, 255))
 restart_label = label.render('Restart', False, (255, 0, 0))
 restart_label_rect = restart_label.get_rect(topleft=(240, 500))
 
+# Timers for spawning enemies and coins (each must be unique!)
 enemy_timer_1 = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer_1, 500)
 
@@ -49,20 +53,23 @@ gameplay = True
 
 
 def spawn_coin():
+    # Try several times to find a safe X position
+    # (so coin doesn't spawn too close to enemies)
     attempts = 0
     while attempts < 20:
         x_pos = random.randint(30, 440)
-        
+
         bad_position = False
-        
+
+        # Check distance from all enemy types
         for el in enemy_1_list_in_game:
-            if abs(el.x - x_pos) < 70:   
+            if abs(el.x - x_pos) < 70:
                 bad_position = True
                 break
         if bad_position:
             attempts += 1
             continue
-            
+
         for el in enemy_2_list_in_game:
             if abs(el.x - x_pos) < 70:
                 bad_position = True
@@ -70,7 +77,7 @@ def spawn_coin():
         if bad_position:
             attempts += 1
             continue
-            
+
         for el in enemy_3_list_in_game:
             if abs(el.x - x_pos) < 70:
                 bad_position = True
@@ -78,51 +85,66 @@ def spawn_coin():
         if bad_position:
             attempts += 1
             continue
-            
+
+        # If position is valid, spawn coin above the screen
         coin_list_in_game.append(coin.get_rect(topleft=(x_pos, -50)))
         return
+
 
 while running:
     screen.blit(fon, (0, 0))
 
     if gameplay:
         screen.blit(player, (player_x, player_y))
+
+        # Shrink hitbox to make collisions feel more fair
         player_rect = player.get_rect(topleft=(player_x, player_y))
         player_rect.inflate_ip(-40, -40)
 
+        # Enemy movement and collision check
         for i, el in enumerate(enemy_1_list_in_game[:]):
             screen.blit(enemy_1, el)
             el.y += 5
+
             if el.y > 790:
                 enemy_1_list_in_game.pop(i)
                 continue
+
             enemy_rect = el.copy()
             enemy_rect.inflate_ip(-40, -40)
+
             if player_rect.colliderect(enemy_rect):
                 gameplay = False
 
         for i, el in enumerate(enemy_2_list_in_game[:]):
             screen.blit(enemy_2, el)
             el.y += 5
+
             if el.y > 790:
                 enemy_2_list_in_game.pop(i)
                 continue
+
             enemy_rect = el.copy()
             enemy_rect.inflate_ip(-40, -40)
+
             if player_rect.colliderect(enemy_rect):
                 gameplay = False
 
         for i, el in enumerate(enemy_3_list_in_game[:]):
             screen.blit(enemy_3, el)
             el.y += 5
+
             if el.y > 790:
                 enemy_3_list_in_game.pop(i)
                 continue
+
             enemy_rect = el.copy()
             enemy_rect.inflate_ip(-40, -40)
+
             if player_rect.colliderect(enemy_rect):
                 gameplay = False
 
+        # Coin movement and collection logic
         for i, el in enumerate(coin_list_in_game[:]):
             screen.blit(coin, el)
             el.y += 4
@@ -136,9 +158,11 @@ while running:
                 score += 1
                 continue
 
+        # Display score (top-left as you wanted)
         score_text = label.render(f"Score: {score}", False, (255, 255, 0))
         screen.blit(score_text, (10, 10))
 
+        # Player movement with boundary limits
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and player_x > 10:
             player_x -= player_speed
@@ -154,6 +178,7 @@ while running:
         screen.blit(lose_label, (240, 390))
         screen.blit(restart_label, restart_label_rect)
 
+        # Restart on mouse click
         mouse = pygame.mouse.get_pos()
         if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
             gameplay = True
@@ -172,6 +197,7 @@ while running:
             running = False
             pygame.quit()
 
+        # Spawn enemies in fixed lanes
         if event.type == enemy_timer_1:
             enemy_1_list_in_game.append(enemy_1.get_rect(topleft=(30, -400)))
 
@@ -182,4 +208,4 @@ while running:
             enemy_3_list_in_game.append(enemy_3.get_rect(topleft=(430, -1600)))
 
         if event.type == coin_timer:
-            spawn_coin()        
+            spawn_coin()
