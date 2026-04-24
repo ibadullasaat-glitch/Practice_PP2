@@ -9,7 +9,7 @@ icon = pygame.image.load('Practice_10/racer/images/icon.png')
 pygame.display.set_icon(icon)
 
 # Player movement settings
-player_speed = 3
+player_speed = 8
 player_x = 30
 player_y = 520
 
@@ -35,7 +35,7 @@ lose_label = label.render('You Lose!', False, (255, 255, 255))
 restart_label = label.render('Restart', False, (255, 0, 0))
 restart_label_rect = restart_label.get_rect(topleft=(240, 500))
 
-# Timers for spawning enemies and coins (each must be unique!)
+# Timers for spawning enemies and coins
 enemy_timer_1 = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer_1, 500)
 
@@ -104,7 +104,7 @@ while running:
         # Enemy movement and collision check
         for i, el in enumerate(enemy_1_list_in_game[:]):
             screen.blit(enemy_1, el)
-            el.y += 5
+            el.y += 10
 
             if el.y > 790:
                 enemy_1_list_in_game.pop(i)
@@ -118,7 +118,7 @@ while running:
 
         for i, el in enumerate(enemy_2_list_in_game[:]):
             screen.blit(enemy_2, el)
-            el.y += 5
+            el.y += 10
 
             if el.y > 790:
                 enemy_2_list_in_game.pop(i)
@@ -132,7 +132,7 @@ while running:
 
         for i, el in enumerate(enemy_3_list_in_game[:]):
             screen.blit(enemy_3, el)
-            el.y += 5
+            el.y += 10
 
             if el.y > 790:
                 enemy_3_list_in_game.pop(i)
@@ -147,7 +147,7 @@ while running:
         # Coin movement and collection logic
         for i, el in enumerate(coin_list_in_game[:]):
             screen.blit(coin, el)
-            el.y += 4
+            el.y += 10
 
             if el.y > 781:
                 coin_list_in_game.pop(i)

@@ -23,7 +23,7 @@ def main():
         'orange': (255, 165, 0)
     }
 
-    current_color = colors['blue']
+    current_color = colors['black']
 
     screen.fill((255, 255, 255))
 
