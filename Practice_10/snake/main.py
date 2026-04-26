@@ -1,11 +1,14 @@
 import pygame
 import random
+import time
 
 pygame.init()
 
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (213, 50, 80)
+green = (0, 255, 0)
+yellow = (255, 255, 0)
 
 dis_width = 600
 dis_height = 400
@@ -40,15 +43,35 @@ def message(msg, color):
     dis.blit(mesg, [dis_width / 4, dis_height / 3])
 
 
-# Generate food position that is NOT inside the snake
 def generate_food(snake_list):
     while True:
         foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
         foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
 
-        # Check collision with snake body
         if [foodx, foody] not in snake_list:
-            return foodx, foody
+            r = random.random()
+
+            if r < 0.7:
+                weight = 1
+                color = green
+                lifetime = 6
+            elif r < 0.9:
+                weight = 2
+                color = yellow
+                lifetime = 5
+            else:
+                weight = 3
+                color = red
+                lifetime = 4
+
+            return {
+                "x": foodx,
+                "y": foody,
+                "weight": weight,
+                "color": color,
+                "spawn_time": time.time(),
+                "lifetime": lifetime
+            }
 
 
 def gameLoop():
@@ -65,8 +88,7 @@ def gameLoop():
     level = 1
     snake_speed = 12
 
-    # Initial food spawn
-    foodx, foody = generate_food(snake_List)
+    food = generate_food(snake_List)
 
     game_over = False
     game_close = False
@@ -101,7 +123,6 @@ def gameLoop():
             if event.type == pygame.QUIT:
                 game_over = True
 
-            # Prevent instant reverse direction
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and x1_change == 0:
                     x1_change = -snake_block
@@ -116,11 +137,9 @@ def gameLoop():
                     y1_change = snake_block
                     x1_change = 0
 
-        # Update position
         x1 += x1_change
         y1 += y1_change
 
-        # Screen wrapping (snake appears on opposite side)
         if x1 >= dis_width:
             x1 = 0
         elif x1 < 0:
@@ -133,16 +152,26 @@ def gameLoop():
 
         dis.fill(black)
 
-        pygame.draw.rect(dis, red, [foodx, foody, snake_block, snake_block])
+        current_time = time.time()
+        time_left = food["lifetime"] - (current_time - food["spawn_time"])
+
+        # если время вышло — новая еда
+        if time_left <= 0:
+            food = generate_food(snake_List)
+        else:
+            # мигание за 1 секунду до исчезновения
+            if time_left < 1:
+                if int(current_time * 10) % 2 == 0:
+                    pygame.draw.rect(dis, food["color"], [food["x"], food["y"], snake_block, snake_block])
+            else:
+                pygame.draw.rect(dis, food["color"], [food["x"], food["y"], snake_block, snake_block])
 
         snake_Head = [x1, y1]
         snake_List.append(snake_Head)
 
-        # Keep snake length constant unless food is eaten
         if len(snake_List) > Length_of_snake:
             del snake_List[0]
 
-        # Check self collision
         for x in snake_List[:-1]:
             if x == snake_Head:
                 game_close = True
@@ -153,17 +182,14 @@ def gameLoop():
 
         pygame.display.update()
 
-        # Food collision
-        if x1 == foodx and y1 == foody:
-            foodx, foody = generate_food(snake_List)
-
+        if x1 == food["x"] and y1 == food["y"]:
             Length_of_snake += 1
-            score += 1
+            score += food["weight"]
+            food = generate_food(snake_List)
 
-            # Level system: every 4 points → new level
             if score // 4 + 1 > level:
                 level += 1
-                snake_speed += 2  # Increase difficulty
+                snake_speed += 2
 
         clock.tick(snake_speed)
 
